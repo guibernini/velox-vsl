@@ -76,7 +76,9 @@ export default function LandingPage() {
   const toggleIndex = (index) => setOpenIndex(openIndex === index ? null : index);
   
   const [formData, setFormData] = useState({ valorConta: "", tipoImovel: "residencial", nome: "", email: "", telefone: "", cidade: "", estado: "" });
-  const [simulation, setSimulation] = useState({ economiaAnual: 0, qtdPlacas: 0, producaoMensal: 0, areaNecessaria: 0 });
+  
+  // ADICIONEI OS VALORES MENSAIS AQUI PARA O GRÁFICO
+  const [simulation, setSimulation] = useState({ economiaAnual: 0, qtdPlacas: 0, producaoMensal: 0, areaNecessaria: 0, valorMensal: 0, novaContaMensal: 0 });
 
   const handleCalculate = () => {
     const valor = parseFloat(formData.valorConta.replace("R$", "").replace(".", "").replace(",", ".")) || 0;
@@ -93,7 +95,14 @@ export default function LandingPage() {
       const area = Math.ceil(placas * 2.5); 
       const producao = Math.floor(placas * 60);
 
-      setSimulation({ economiaAnual, qtdPlacas: placas, producaoMensal: producao, areaNecessaria: area });
+      setSimulation({ 
+        economiaAnual, 
+        qtdPlacas: placas, 
+        producaoMensal: producao, 
+        areaNecessaria: area,
+        valorMensal: valor,         // Salva valor antigo
+        novaContaMensal: novaConta  // Salva valor novo
+      });
       setStep(2);
       setLoadingSim(false);
     }, 1000);
@@ -157,7 +166,7 @@ export default function LandingPage() {
          <div className="absolute bottom-[-20%] right-[-10%] w-[600px] h-[600px] bg-blue-600/5 blur-[150px] rounded-full"></div>
       </div>
 
-      <button onClick={() => handleSimpleClick('Botão Flutuante')} className="fixed bottom-6 right-6 z-50 bg-[#25D366] hover:bg-[#1ebc57] text-white p-4 rounded-full shadow-[0_0_30px_rgba(37,211,102,0.4)] hover:scale-110 transition-all flex items-center gap-3 group border border-white/20 backdrop-blur-sm">
+      <button onClick={() => handleSimpleClick('Botão Flutuante')} className="fixed bottom-6 right-6 z-50 bg-[#25D366] hover:bg-[#1ebc57] text-white p-4 rounded-full shadow-[0_0_30px_rgba(37,211,102,0.4)] hover:scale-105 transition-all flex items-center gap-3 group border border-white/20 backdrop-blur-sm">
         <FaWhatsapp className="text-3xl" />
       </button>
 
@@ -220,8 +229,9 @@ export default function LandingPage() {
                         </div>
                     </div>
 
-                    <div className="bg-black/40 rounded-2xl p-6 border border-white/5 shadow-inner">
+                    <div className="bg-black/40 rounded-2xl p-6 border border-white/5 shadow-inner min-h-[450px] flex flex-col justify-center">
                         <AnimatePresence mode="wait">
+                            {/* PASSO 1 */}
                             {step === 1 && (
                                 <motion.div key="step1" initial={{opacity:0}} animate={{opacity:1}} exit={{opacity:0}}>
                                     <label className="text-[#00FF88] text-xs font-bold uppercase tracking-wider mb-2 block">Valor Mensal da Conta</label>
@@ -256,6 +266,8 @@ export default function LandingPage() {
                                     </button>
                                 </motion.div>
                             )}
+
+                            {/* PASSO 2 */}
                             {step === 2 && (
                                 <motion.div key="step2" initial={{opacity:0, x:20}} animate={{opacity:1, x:0}} className="text-center">
                                     <div className="w-16 h-16 bg-[#00FF88]/10 rounded-full flex items-center justify-center mx-auto mb-4 text-[#00FF88]"><Zap size={32}/></div>
@@ -265,7 +277,6 @@ export default function LandingPage() {
                                     <input type="text" placeholder="Seu Nome" value={formData.nome} onChange={e=>setFormData({...formData, nome:e.target.value})} className="w-full p-4 rounded-xl bg-white/5 border border-white/10 focus:border-[#00FF88] outline-none text-white mb-2" />
                                     <input type="tel" placeholder="WhatsApp (com DDD)" value={formData.telefone} onChange={e=>setFormData({...formData, telefone:e.target.value})} className="w-full p-4 rounded-xl bg-white/5 border border-white/10 focus:border-[#00FF88] outline-none text-white mb-2" />
                                     
-                                    {/* CAMPOS DE CIDADE E ESTADO ADICIONADOS */}
                                     <div className="grid grid-cols-3 gap-2 mb-4">
                                         <input type="text" placeholder="Cidade" value={formData.cidade} onChange={e=>setFormData({...formData, cidade:e.target.value})} className="col-span-2 p-4 rounded-xl bg-white/5 border border-white/10 focus:border-[#00FF88] outline-none text-white" />
                                         <input type="text" placeholder="UF" maxLength={2} value={formData.estado} onChange={e=>setFormData({...formData, estado:e.target.value.toUpperCase()})} className="p-4 rounded-xl bg-white/5 border border-white/10 focus:border-[#00FF88] outline-none text-white text-center" />
@@ -276,14 +287,54 @@ export default function LandingPage() {
                                     </button>
                                 </motion.div>
                             )}
+
+                            {/* PASSO 3 - COM GRÁFICO 📊 */}
                             {step === 3 && (
-                                <motion.div key="step3" initial={{scale:0.95, opacity:0}} animate={{scale:1, opacity:1}} className="text-center">
-                                    <p className="text-gray-400 text-xs uppercase tracking-widest mb-2">Economia Anual Estimada</p>
-                                    <div className="text-5xl font-black text-[#00FF88] mb-6 drop-shadow-[0_0_20px_rgba(0,255,136,0.3)]">R$ {simulation.economiaAnual.toLocaleString('pt-BR', {minimumFractionDigits: 2})}</div>
-                                    <div className="grid grid-cols-2 gap-3 mb-6">
-                                        <div className="bg-white/5 p-3 rounded-lg border border-white/10"><div className="text-xl mb-1">🔆</div><div className="font-bold text-white">{simulation.qtdPlacas} Painéis</div></div>
-                                        <div className="bg-white/5 p-3 rounded-lg border border-white/10"><div className="text-xl mb-1">📐</div><div className="font-bold text-white">{simulation.areaNecessaria} m²</div></div>
+                                <motion.div key="step3" initial={{scale:0.95, opacity:0}} animate={{scale:1, opacity:1}} className="text-center h-full flex flex-col justify-between">
+                                    
+                                    <p className="text-gray-400 text-xs uppercase tracking-widest mb-4">Comparativo Mensal</p>
+                                    
+                                    {/* GRÁFICO VISUAL */}
+                                    <div className="flex items-end justify-center gap-6 h-32 mb-6 px-4">
+                                        {/* Barra Vermelha (Conta Atual) */}
+                                        <div className="flex flex-col items-center gap-2 w-1/2 h-full justify-end group">
+                                            <span className="text-red-400 text-xs font-bold opacity-0 group-hover:opacity-100 transition-opacity">R${simulation.valorMensal}</span>
+                                            <motion.div 
+                                                initial={{ height: "0%" }} 
+                                                animate={{ height: "100%" }} 
+                                                transition={{ duration: 1 }}
+                                                className="w-full bg-gradient-to-t from-red-900 to-red-500 rounded-t-lg relative"
+                                            >
+                                                <div className="absolute -top-6 left-0 right-0 text-center text-xs font-bold text-red-500">Antes</div>
+                                            </motion.div>
+                                        </div>
+
+                                        {/* Barra Verde (Com Velox) */}
+                                        <div className="flex flex-col items-center gap-2 w-1/2 h-full justify-end group">
+                                            <span className="text-[#00FF88] text-xs font-bold opacity-0 group-hover:opacity-100 transition-opacity">R${simulation.novaContaMensal.toFixed(0)}</span>
+                                            <motion.div 
+                                                initial={{ height: "0%" }} 
+                                                animate={{ height: "15%" }} 
+                                                transition={{ duration: 1, delay: 0.5 }}
+                                                className="w-full bg-[#00FF88] rounded-t-lg relative shadow-[0_0_20px_rgba(0,255,136,0.4)]"
+                                            >
+                                                <div className="absolute -top-6 left-0 right-0 text-center text-xs font-bold text-[#00FF88]">Velox</div>
+                                            </motion.div>
+                                        </div>
                                     </div>
+
+                                    {/* RESULTADOS */}
+                                    <div>
+                                        <p className="text-gray-400 text-xs">Economia Anual Projetada</p>
+                                        <div className="text-4xl font-black text-[#00FF88] mb-4 drop-shadow-[0_0_20px_rgba(0,255,136,0.3)]">
+                                            R$ {simulation.economiaAnual.toLocaleString('pt-BR', {minimumFractionDigits: 2})}
+                                        </div>
+                                        <div className="flex justify-center gap-4 text-xs text-white/80 mb-6">
+                                            <div className="flex items-center gap-1"><Zap size={14} className="text-[#00FF88]"/> {simulation.qtdPlacas} Placas</div>
+                                            <div className="flex items-center gap-1"><Building size={14} className="text-[#00FF88]"/> {simulation.areaNecessaria}m²</div>
+                                        </div>
+                                    </div>
+
                                     <button onClick={handleFinalWhatsApp} className="w-full bg-[#25D366] hover:bg-[#1ebc57] text-white font-bold py-4 rounded-xl transition-all flex items-center justify-center gap-2"><FaWhatsapp size={24} /> Garantir Economia</button>
                                 </motion.div>
                             )}
