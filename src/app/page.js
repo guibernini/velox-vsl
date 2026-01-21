@@ -100,7 +100,7 @@ export default function LandingPage() {
   };
 
   const handleLeadSubmit = async () => {
-    if(!formData.nome || !formData.telefone) return alert("Preencha Nome e Whatsapp.");
+    if(!formData.nome || !formData.telefone || !formData.cidade) return alert("Preencha Nome, WhatsApp e Cidade.");
     setSendingLead(true);
     
     const leadData = { ...formData, ...simulation, data_criacao: new Date().toLocaleString() };
@@ -113,7 +113,7 @@ export default function LandingPage() {
 
   const handleFinalWhatsApp = () => {
     const fMoney = (val) => val.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
-    const text = `*Simulação Velox:* ☀️\nNome: ${formData.nome}\nConta: ${formData.valorConta}\nEconomia: ${fMoney(simulation.economiaAnual)}\nPlacas: ${simulation.qtdPlacas}`;
+    const text = `*Simulação Velox:* ☀️\n👤 *Cliente:* ${formData.nome}\n📍 *Local:* ${formData.cidade}/${formData.estado}\n💲 *Conta:* ${formData.valorConta}\n📉 *Economia:* ${fMoney(simulation.economiaAnual)}\n🔆 *Placas:* ${simulation.qtdPlacas}`;
     redirectToThankYou(`${whatsappBase}?text=${encodeURIComponent(text)}`, 'Calculadora Final');
   };
 
@@ -201,7 +201,6 @@ export default function LandingPage() {
 
       {/* ================= CALCULADORA ================= */}
       <section id="calculadora" className="py-24 px-6 relative z-10 overflow-hidden">
-         {/* FOTO DE FUNDO AUMENTADA PARA 70% */}
          <div className="absolute inset-0 z-0">
              <Image src="/calculadora-foto.jpeg" alt="Fundo Calculadora" fill className="object-cover opacity-70" priority />
              <div className="absolute inset-0 bg-[#0B0D17]/80"></div>
@@ -230,13 +229,23 @@ export default function LandingPage() {
                                     
                                     <label className="text-gray-400 text-xs font-bold uppercase tracking-wider mb-2 block">Tipo de Imóvel</label>
                                     <div className="grid grid-cols-4 gap-2 mb-6">
-                                        {[ {id:'residencial', icon:Home}, {id:'comercial', icon:Building}, {id:'rural', icon:Tractor}, {id:'industrial', icon:Factory} ].map((tipo) => (
-                                            <button key={tipo.id} onClick={() => setFormData({...formData, tipoImovel: tipo.id})} className={`p-3 rounded-xl border flex justify-center items-center transition-all ${formData.tipoImovel === tipo.id ? "bg-[#00FF88] border-[#00FF88] text-black shadow-[0_0_15px_rgba(0,255,136,0.3)]" : "border-white/10 text-gray-400 hover:bg-white/10"}`}><tipo.icon size={20} /></button>
+                                        {[ 
+                                            {id:'residencial', icon:Home, label: 'Casa'}, 
+                                            {id:'comercial', icon:Building, label: 'Comércio'}, 
+                                            {id:'rural', icon:Tractor, label: 'Rural'}, 
+                                            {id:'industrial', icon:Factory, label: 'Indústria'} 
+                                        ].map((tipo) => (
+                                            <button 
+                                                key={tipo.id} 
+                                                onClick={() => setFormData({...formData, tipoImovel: tipo.id})} 
+                                                className={`p-3 rounded-xl border flex flex-col justify-center items-center gap-1 transition-all ${formData.tipoImovel === tipo.id ? "bg-[#00FF88] border-[#00FF88] text-black shadow-[0_0_15px_rgba(0,255,136,0.3)]" : "border-white/10 text-gray-400 hover:bg-white/10"}`}
+                                            >
+                                                <tipo.icon size={20} />
+                                                <span className="text-[10px] font-bold uppercase">{tipo.label}</span>
+                                            </button>
                                         ))}
                                     </div>
                                     
-                                    {/* --- CORREÇÃO DO BOTÃO PRETO --- */}
-                                    {/* Removemos o gradiente e usamos style para forçar a cor */}
                                     <button 
                                         onClick={handleCalculate} 
                                         disabled={loadingSim} 
@@ -251,9 +260,17 @@ export default function LandingPage() {
                                 <motion.div key="step2" initial={{opacity:0, x:20}} animate={{opacity:1, x:0}} className="text-center">
                                     <div className="w-16 h-16 bg-[#00FF88]/10 rounded-full flex items-center justify-center mx-auto mb-4 text-[#00FF88]"><Zap size={32}/></div>
                                     <h3 className="text-xl font-bold mb-2">Potencial Identificado!</h3>
-                                    <p className="text-gray-400 text-sm mb-6">Insira seus dados para receber o estudo técnico.</p>
-                                    <input type="text" placeholder="Seu Nome" value={formData.nome} onChange={e=>setFormData({...formData, nome:e.target.value})} className="w-full p-4 rounded-xl bg-white/5 border border-white/10 focus:border-[#00FF88] outline-none text-white mb-3" />
-                                    <input type="tel" placeholder="WhatsApp" value={formData.telefone} onChange={e=>setFormData({...formData, telefone:e.target.value})} className="w-full p-4 rounded-xl bg-white/5 border border-white/10 focus:border-[#00FF88] outline-none text-white mb-6" />
+                                    <p className="text-gray-400 text-sm mb-4">Insira seus dados para receber o estudo técnico.</p>
+                                    
+                                    <input type="text" placeholder="Seu Nome" value={formData.nome} onChange={e=>setFormData({...formData, nome:e.target.value})} className="w-full p-4 rounded-xl bg-white/5 border border-white/10 focus:border-[#00FF88] outline-none text-white mb-2" />
+                                    <input type="tel" placeholder="WhatsApp (com DDD)" value={formData.telefone} onChange={e=>setFormData({...formData, telefone:e.target.value})} className="w-full p-4 rounded-xl bg-white/5 border border-white/10 focus:border-[#00FF88] outline-none text-white mb-2" />
+                                    
+                                    {/* CAMPOS DE CIDADE E ESTADO ADICIONADOS */}
+                                    <div className="grid grid-cols-3 gap-2 mb-4">
+                                        <input type="text" placeholder="Cidade" value={formData.cidade} onChange={e=>setFormData({...formData, cidade:e.target.value})} className="col-span-2 p-4 rounded-xl bg-white/5 border border-white/10 focus:border-[#00FF88] outline-none text-white" />
+                                        <input type="text" placeholder="UF" maxLength={2} value={formData.estado} onChange={e=>setFormData({...formData, estado:e.target.value.toUpperCase()})} className="p-4 rounded-xl bg-white/5 border border-white/10 focus:border-[#00FF88] outline-none text-white text-center" />
+                                    </div>
+
                                     <button onClick={handleLeadSubmit} disabled={sendingLead} className="w-full bg-[#00FF88] text-black font-bold py-4 rounded-xl hover:bg-[#00e67a] transition-all">
                                         {sendingLead ? "Enviando..." : "Ver Resultado"}
                                     </button>
