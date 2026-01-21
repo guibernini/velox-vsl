@@ -77,7 +77,7 @@ export default function LandingPage() {
   
   const [formData, setFormData] = useState({ valorConta: "", tipoImovel: "residencial", nome: "", email: "", telefone: "", cidade: "", estado: "" });
   
-  // ADICIONEI OS VALORES MENSAIS AQUI PARA O GRÁFICO
+  // VALORES PARA O GRÁFICO
   const [simulation, setSimulation] = useState({ economiaAnual: 0, qtdPlacas: 0, producaoMensal: 0, areaNecessaria: 0, valorMensal: 0, novaContaMensal: 0 });
 
   const handleCalculate = () => {
@@ -100,8 +100,8 @@ export default function LandingPage() {
         qtdPlacas: placas, 
         producaoMensal: producao, 
         areaNecessaria: area,
-        valorMensal: valor,         // Salva valor antigo
-        novaContaMensal: novaConta  // Salva valor novo
+        valorMensal: valor,         
+        novaContaMensal: novaConta  
       });
       setStep(2);
       setLoadingSim(false);
@@ -288,38 +288,53 @@ export default function LandingPage() {
                                 </motion.div>
                             )}
 
-                            {/* PASSO 3 - COM GRÁFICO 📊 */}
+                            {/* PASSO 3 - COM GRÁFICO CORRIGIDO ✅ */}
                             {step === 3 && (
                                 <motion.div key="step3" initial={{scale:0.95, opacity:0}} animate={{scale:1, opacity:1}} className="text-center h-full flex flex-col justify-between">
                                     
                                     <p className="text-gray-400 text-xs uppercase tracking-widest mb-4">Comparativo Mensal</p>
                                     
-                                    {/* GRÁFICO VISUAL */}
-                                    <div className="flex items-end justify-center gap-6 h-32 mb-6 px-4">
+                                    {/* GRÁFICO VISUAL ARRUMADO */}
+                                    <div className="flex items-end justify-center gap-8 h-40 mb-8 px-4 w-full max-w-sm mx-auto">
+                                        
                                         {/* Barra Vermelha (Conta Atual) */}
-                                        <div className="flex flex-col items-center gap-2 w-1/2 h-full justify-end group">
-                                            <span className="text-red-400 text-xs font-bold opacity-0 group-hover:opacity-100 transition-opacity">R${simulation.valorMensal}</span>
+                                        <div className="w-16 h-full flex flex-col justify-end items-center group relative">
+                                            {/* Texto: Valor (Aparece no Hover) */}
+                                            <span className="absolute -top-8 text-white font-bold text-sm opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                                                R${simulation.valorMensal}
+                                            </span>
+                                            {/* Texto: Rótulo (Some no Hover) */}
+                                            <span className="absolute -top-6 text-red-400 font-bold text-xs group-hover:opacity-0 transition-opacity duration-300">
+                                                Antes
+                                            </span>
+
+                                            {/* A Barra Vermelha */}
                                             <motion.div 
-                                                initial={{ height: "0%" }} 
+                                                initial={{ height: 0 }} 
                                                 animate={{ height: "100%" }} 
                                                 transition={{ duration: 1 }}
-                                                className="w-full bg-gradient-to-t from-red-900 to-red-500 rounded-t-lg relative"
-                                            >
-                                                <div className="absolute -top-6 left-0 right-0 text-center text-xs font-bold text-red-500">Antes</div>
-                                            </motion.div>
+                                                className="w-full bg-gradient-to-t from-red-900 to-red-600 rounded-t-lg shadow-[0_0_15px_rgba(220,38,38,0.5)]"
+                                            />
                                         </div>
 
                                         {/* Barra Verde (Com Velox) */}
-                                        <div className="flex flex-col items-center gap-2 w-1/2 h-full justify-end group">
-                                            <span className="text-[#00FF88] text-xs font-bold opacity-0 group-hover:opacity-100 transition-opacity">R${simulation.novaContaMensal.toFixed(0)}</span>
+                                        <div className="w-16 h-full flex flex-col justify-end items-center group relative">
+                                            {/* Texto: Valor (Aparece no Hover) */}
+                                            <span className="absolute -top-8 text-white font-bold text-sm opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                                                R${simulation.novaContaMensal.toFixed(0)}
+                                            </span>
+                                            {/* Texto: Rótulo (Some no Hover) */}
+                                            <span className="absolute -top-6 text-[#00FF88] font-bold text-xs group-hover:opacity-0 transition-opacity duration-300">
+                                                Velox
+                                            </span>
+
+                                            {/* A Barra Verde */}
                                             <motion.div 
-                                                initial={{ height: "0%" }} 
-                                                animate={{ height: "15%" }} 
+                                                initial={{ height: 0 }} 
+                                                animate={{ height: "10%" }} 
                                                 transition={{ duration: 1, delay: 0.5 }}
-                                                className="w-full bg-[#00FF88] rounded-t-lg relative shadow-[0_0_20px_rgba(0,255,136,0.4)]"
-                                            >
-                                                <div className="absolute -top-6 left-0 right-0 text-center text-xs font-bold text-[#00FF88]">Velox</div>
-                                            </motion.div>
+                                                className="w-full bg-[#00FF88] rounded-t-lg shadow-[0_0_20px_rgba(0,255,136,0.6)]"
+                                            />
                                         </div>
                                     </div>
 
