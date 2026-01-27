@@ -4,7 +4,7 @@ import { useState, useEffect, useRef } from "react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { motion, AnimatePresence, useInView } from "framer-motion";
-import { Home, Building, Factory, Tractor, CheckCircle, Zap, Car, Battery, TrendingUp, ArrowDown, CreditCard } from "lucide-react";
+import { Home, Building, Factory, Tractor, CheckCircle, Zap, Car, Battery, TrendingUp, ArrowDown, ChevronLeft, ChevronRight, X } from "lucide-react";
 import { FaWhatsapp, FaInstagram, FaEnvelope } from "react-icons/fa";
 
 // --- NÚMEROS ANIMADOS ---
@@ -137,19 +137,42 @@ export default function LandingPage() {
     { label: "Projetos Entregues", value: 1000, suffix: "+", duration: 1500 },
   ];
 
-  // --- SOLUÇÕES (LISTA PARA O CARROSSEL) ---
+  // --- SOLUÇÕES & CARROSSEL MANUAL ---
   const solutions = [
-    { icon: Home, title: "Residencial", desc: "Proteção contra inflação energética." },
-    { icon: Car, title: "Eletropostos", desc: "Carregadores para veículos elétricos." },
-    { icon: Factory, title: "Empresarial", desc: "Redução de custos operacionais." },
-    { icon: Tractor, title: "Agro Solar", desc: "Energia para irrigação e produção." },
-    { icon: Battery, title: "Off-Grid", desc: "Baterias para backup de energia." },
-    { icon: TrendingUp, title: "Usina de Investimento", desc: "Retorno superior a Renda Fixa." },
-    { icon: Zap, title: "Energia por Assinatura", desc: "Economia sem obras, direto da usina." }
+    { icon: Home, title: "Residencial", desc: "Proteja sua casa da inflação energética. Gere sua própria energia e valorize seu imóvel em até 6%." },
+    { icon: Car, title: "Eletropostos", desc: "Soluções completas de carregamento para veículos elétricos. Prepare sua garagem para o futuro." },
+    { icon: Factory, title: "Empresarial", desc: "Reduza o custo fixo da sua empresa drasticamente. Mais lucro no caixa e selo verde para sua marca." },
+    { icon: Tractor, title: "Agro Solar", desc: "Energia para irrigação, ordenha e produção. Reduza custos no campo e aumente sua competitividade." },
+    { icon: Battery, title: "Off-Grid", desc: "Independência total. Baterias de alta performance para locais isolados ou backup de segurança." },
+    { icon: TrendingUp, title: "Usina de Investimento", desc: "Alugue usinas solares e obtenha retornos superiores à Renda Fixa e Poupança." },
+    { icon: Zap, title: "Energia por Assinatura", desc: "Economia garantida sem obras e sem instalação de placas. Ideal para apartamentos e aluguel." }
   ];
 
-  // Duplicar a lista para o efeito infinito
-  const carouselItems = [...solutions, ...solutions];
+  const carouselRef = useRef(null);
+  const [selectedSolution, setSelectedSolution] = useState(null); // Estado para o Modal
+
+  const scrollLeft = () => {
+    if (carouselRef.current) carouselRef.current.scrollBy({ left: -320, behavior: 'smooth' });
+  };
+
+  const scrollRight = () => {
+    if (carouselRef.current) carouselRef.current.scrollBy({ left: 320, behavior: 'smooth' });
+  };
+
+  const handleSolutionClick = (item) => {
+    setSelectedSolution(item); // Abre o modal com o item clicado
+  };
+
+  const handleModalClose = () => {
+    setSelectedSolution(null);
+  };
+
+  const handleSolutionWhatsApp = () => {
+    if (!selectedSolution) return;
+    const message = `Olá! Gostaria de saber mais sobre a solução: *${selectedSolution.title}*.`;
+    const finalUrl = `${whatsappBase}?text=${encodeURIComponent(message)}`;
+    redirectToThankYou(finalUrl, `Solução: ${selectedSolution.title}`);
+  };
 
   const faqs = [
     { question: "Preciso fazer obra no telhado?", answer: "Na maioria dos casos, não. Nossa equipe técnica avalia a estrutura e utiliza fixadores especiais que não causam goteiras ou danos." },
@@ -161,22 +184,6 @@ export default function LandingPage() {
 
   return (
     <div className="min-h-screen bg-[#0B0D17] text-white font-sans selection:bg-[#00FF88] selection:text-black overflow-x-hidden">
-      
-      {/* ESTILOS PARA O CARROSSEL (CSS PURO) */}
-      <style jsx>{`
-        @keyframes scroll {
-          0% { transform: translateX(0); }
-          100% { transform: translateX(-50%); }
-        }
-        .animate-scroll {
-          display: flex;
-          width: max-content;
-          animation: scroll 40s linear infinite;
-        }
-        .animate-scroll:hover {
-          animation-play-state: paused;
-        }
-      `}</style>
 
       {/* GRADIENTE DE FUNDO FIXO */}
       <div className="fixed inset-0 z-0 pointer-events-none">
@@ -188,7 +195,7 @@ export default function LandingPage() {
         <FaWhatsapp className="text-3xl" />
       </button>
 
-      {/* ================= HERO SECTION (ATUALIZADO) ================= */}
+      {/* ================= HERO SECTION ================= */}
       <section className="relative min-h-[100vh] lg:min-h-[95vh] flex items-center pt-24 pb-12 overflow-hidden z-10">
         <div className="absolute inset-0 z-0">
             <Image src="/hero-solar.webp" alt="Energia Solar" fill className="object-cover opacity-50" priority />
@@ -199,12 +206,10 @@ export default function LandingPage() {
         <div className="container mx-auto px-6 grid lg:grid-cols-2 gap-12 items-center relative z-10">
             <motion.div initial={{ opacity: 0, x: -50 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.8 }}>
                 
-                {/* ETIQUETA ATUALIZADA - LETRA MAIOR E MAIS DESTAQUE */}
                 <div className="inline-block px-6 py-2 rounded-full border border-[#00FF88] bg-[#00FF88]/20 text-[#00FF88] text-lg font-bold mb-6 backdrop-blur-md shadow-[0_0_15px_rgba(0,255,136,0.2)]">
                    🇧🇷 Atendimento em todo o Brasil
                 </div>
 
-                {/* TÍTULO ATUALIZADO */}
                 <h1 className="text-4xl md:text-6xl font-bold mb-6 leading-tight">Reduza em até 95% sua conta de luz com a <span className="text-[#00FF88]">Velox Solar</span></h1>
                 
                 <p className="text-gray-300 text-lg md:text-xl mb-8 leading-relaxed max-w-lg drop-shadow-md">
@@ -285,13 +290,11 @@ export default function LandingPage() {
                                 <motion.div key="step3" initial={{scale:0.95, opacity:0}} animate={{scale:1, opacity:1}} className="text-center h-full flex flex-col justify-between">
                                     <p className="text-gray-400 text-xs uppercase tracking-widest mb-10">Comparativo Mensal</p>
                                     <div className="flex items-end justify-center gap-12 h-40 mb-10 px-4 w-full">
-                                        {/* Barra Vermelha */}
                                         <div className="w-14 flex flex-col justify-end items-center group relative h-full">
                                             <span className="absolute -top-10 text-white font-bold text-sm opacity-0 group-hover:opacity-100 transition-opacity duration-300 whitespace-nowrap">R$ {simulation.valorMensal}</span>
                                             <span className="absolute -top-8 text-red-500 font-bold text-xs group-hover:opacity-0 transition-opacity duration-300 uppercase">Antes</span>
-                                            <motion.div initial={{ height: 0 }} animate={{ height: "100%" }} transition={{ duration: 1 }} className="w-full bg-gradient-to-t from-red-900 to-red-600 rounded-t-lg shadow-[0_0_15px_rgba(220,38,38,0.4)]"/>
+                                            <motion.div initial={{ height: 0 }} animate={{ height: "100%" }} transition={{ duration: 1 }} className="w-full bg-red-600 rounded-t-lg shadow-[0_0_20px_rgba(220,38,38,0.6)]"/>
                                         </div>
-                                        {/* Barra Verde */}
                                         <div className="w-14 flex flex-col justify-end items-center group relative h-full">
                                             <span className="absolute -top-10 text-[#00FF88] font-bold text-sm opacity-0 group-hover:opacity-100 transition-opacity duration-300 whitespace-nowrap">R$ {simulation.novaContaMensal.toFixed(0)}</span>
                                             <span className="absolute -top-8 text-[#00FF88] font-bold text-xs group-hover:opacity-0 transition-opacity duration-300 uppercase">Velox</span>
@@ -328,34 +331,102 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* ================= SOLUÇÕES (NOVO CARROSSEL INFINITO) ================= */}
+      {/* ================= SOLUÇÕES (CARROSSEL MANUAL) ================= */}
       <section className="py-24 relative z-10 overflow-hidden">
         <div className="container mx-auto max-w-6xl px-6 mb-12">
             <div className="text-center">
                 <h2 className="text-3xl font-bold mb-4">Soluções Velox</h2>
-                <p className="text-gray-400">Tecnologia adaptada para cada necessidade.</p>
+                <p className="text-gray-400">Clique no card para saber mais.</p>
             </div>
         </div>
 
         {/* CONTAINER DO CARROSSEL */}
-        <div className="w-full overflow-hidden py-10">
-             <div className="animate-scroll flex gap-8">
-                {/* Renderiza a lista duas vezes para o loop infinito */}
-                {carouselItems.map((item, i) => (
+        <div className="relative w-full max-w-[1400px] mx-auto group px-4">
+             {/* SETA ESQUERDA */}
+             <button 
+                onClick={scrollLeft}
+                className="absolute left-0 md:left-4 top-1/2 -translate-y-1/2 z-20 bg-black/50 hover:bg-[#00FF88] hover:text-black border border-white/10 p-3 rounded-full backdrop-blur-md transition-all hidden md:flex"
+             >
+                <ChevronLeft size={24} />
+             </button>
+
+             {/* SETA DIREITA */}
+             <button 
+                onClick={scrollRight}
+                className="absolute right-0 md:right-4 top-1/2 -translate-y-1/2 z-20 bg-black/50 hover:bg-[#00FF88] hover:text-black border border-white/10 p-3 rounded-full backdrop-blur-md transition-all hidden md:flex"
+             >
+                <ChevronRight size={24} />
+             </button>
+
+             {/* LISTA SCROLLÁVEL */}
+             <div 
+                ref={carouselRef}
+                className="flex gap-6 overflow-x-auto scroll-smooth no-scrollbar pb-10 px-4 md:px-16"
+                style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
+             >
+                {solutions.map((item, i) => (
                     <div 
                         key={i} 
-                        className="min-w-[300px] md:min-w-[350px] bg-white/5 backdrop-blur-md p-8 rounded-3xl border border-white/5 hover:border-[#00FF88]/50 transition-all duration-300 transform hover:scale-105 hover:bg-[#00FF88]/5 hover:shadow-[0_0_30px_rgba(0,255,136,0.1)] cursor-pointer flex flex-col items-start"
+                        onClick={() => handleSolutionClick(item)}
+                        className="min-w-[300px] md:min-w-[350px] bg-white/5 backdrop-blur-md p-8 rounded-3xl border border-white/5 hover:border-[#00FF88] transition-all duration-300 transform hover:-translate-y-2 hover:bg-[#00FF88]/5 cursor-pointer flex flex-col items-start group/card relative"
                     >
-                        <div className="bg-white/5 w-14 h-14 rounded-2xl flex items-center justify-center text-[#00FF88] mb-6 shadow-inner">
+                        <div className="bg-white/5 w-14 h-14 rounded-2xl flex items-center justify-center text-[#00FF88] mb-6 shadow-inner group-hover/card:scale-110 transition-transform">
                             <item.icon size={28}/>
                         </div>
                         <h3 className="text-xl font-bold text-white mb-3">{item.title}</h3>
-                        <p className="text-gray-400 text-sm leading-relaxed">{item.desc}</p>
+                        <p className="text-gray-400 text-sm leading-relaxed line-clamp-2">{item.desc}</p>
+                        
+                        <div className="mt-4 text-[#00FF88] text-sm font-bold opacity-0 group-hover/card:opacity-100 transition-opacity flex items-center gap-1">
+                            Ver detalhes <ChevronRight size={16}/>
+                        </div>
                     </div>
                 ))}
              </div>
         </div>
       </section>
+
+      {/* ================= MODAL DE DETALHES ================= */}
+      <AnimatePresence>
+        {selectedSolution && (
+            <motion.div 
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm"
+                onClick={handleModalClose}
+            >
+                <motion.div 
+                    initial={{ scale: 0.9, y: 20 }}
+                    animate={{ scale: 1, y: 0 }}
+                    exit={{ scale: 0.9, y: 20 }}
+                    className="bg-[#0B0D17] border border-[#00FF88]/30 p-8 md:p-12 rounded-3xl max-w-lg w-full relative shadow-[0_0_50px_rgba(0,255,136,0.15)]"
+                    onClick={(e) => e.stopPropagation()} // Impede fechar ao clicar dentro
+                >
+                    <button 
+                        onClick={handleModalClose}
+                        className="absolute top-4 right-4 text-gray-400 hover:text-white bg-white/5 p-2 rounded-full transition-colors"
+                    >
+                        <X size={20} />
+                    </button>
+
+                    <div className="w-16 h-16 bg-[#00FF88]/10 rounded-2xl flex items-center justify-center text-[#00FF88] mb-6 mx-auto border border-[#00FF88]/20">
+                        <selectedSolution.icon size={32} />
+                    </div>
+
+                    <h3 className="text-2xl md:text-3xl font-bold text-center mb-4">{selectedSolution.title}</h3>
+                    <p className="text-gray-300 text-center leading-relaxed mb-8">{selectedSolution.desc}</p>
+
+                    <button 
+                        onClick={handleSolutionWhatsApp}
+                        className="w-full bg-[#00FF88] text-black font-bold py-4 rounded-xl hover:bg-[#00e67a] shadow-lg flex items-center justify-center gap-2 transition-transform hover:scale-105"
+                    >
+                        <FaWhatsapp size={24} />
+                        Quero saber mais sobre isso
+                    </button>
+                </motion.div>
+            </motion.div>
+        )}
+      </AnimatePresence>
 
       {/* ================= FAQ & FOOTER ================= */}
       <section className="py-24 px-6 relative z-10 bg-black/20">
@@ -391,7 +462,7 @@ export default function LandingPage() {
       <footer className="border-t border-white/5 pt-16 pb-8 relative z-10 bg-black/40 backdrop-blur-md">
         <div className="container mx-auto px-6 grid md:grid-cols-3 gap-12 mb-12">
             <div className="text-left"><p className="text-white font-bold mb-4">Sobre a Velox</p><p className="text-gray-500 text-sm leading-relaxed">Especialistas em projetos fotovoltaicos de alta performance.</p></div>
-            <div className="text-left"><p className="text-white font-bold mb-4">Atendimento</p><ul className="space-y-2 text-sm text-gray-500"><li>Segunda a Sexta: 08h às 18h</li><li>Sábado: 08h às 12h</li><li className="pt-2">contato@veloxsolar.com.br</li></ul></div>
+            <div className="text-left"><p className="text-white font-bold mb-4">Atendimento</p><ul className="space-y-2 text-sm text-gray-500"><li>Segunda a Sexta: 08h às 18h</li><li>Sábado: 08h às 12h</li><li className="pt-2"><a href={emailLink} className="hover:text-[#00FF88] transition">saopaulo.pompeia@veloxsolarenergia.com.br</a></li></ul></div>
             <div className="text-left">
                 <p className="text-white font-bold mb-4">Redes Sociais</p>
                 <div className="flex gap-4">
