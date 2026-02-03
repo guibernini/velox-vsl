@@ -36,7 +36,7 @@ export default function ObrigadoPage() {
       };
     } else {
       // Se não tiver link (acesso direto), manda pro WhatsApp genérico
-      setWhatsappUrl("https://wa.me/5511940306171");
+      setWhatsappUrl("https://wa.me/5511951569352");
     }
   }, []);
 
