@@ -36,7 +36,7 @@ export default function LandingPage() {
   const router = useRouter();
 
   // --- CONFIGURAÇÕES ---
-  const whatsappNumber = "5511940306171"; 
+  const whatsappNumber = "5511951569352"; // ✅ NÚMERO ATUALIZADO
   const whatsappBase = `https://wa.me/${whatsappNumber}`;
   const instagramLink = "https://www.instagram.com/veloxsolar.pompeiahome/";
   const emailLink = "mailto:saopaulo.pompeia@veloxsolarenergia.com.br";
