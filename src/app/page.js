@@ -432,15 +432,12 @@ export default function LandingPage() {
       <section className="py-24 px-6 relative z-10 bg-black/20">
         <div className="container mx-auto max-w-6xl flex flex-col lg:flex-row gap-16 items-start">
              <div className="lg:w-1/2 sticky top-24">
-                {/* 🛑 CORREÇÃO AQUI: Sem animação e com unoptimized */}
+                {/* 🛑 ALTERAÇÃO: Usando tag <img> padrão do HTML */}
                 <div className="relative h-[300px] lg:h-[500px] w-full rounded-2xl overflow-hidden border border-white/10 shadow-2xl">
-                    <Image 
+                    <img 
                         src="/solar-texto.jpeg" 
                         alt="Atendimento Velox" 
-                        fill 
-                        unoptimized={true}
-                        sizes="(max-width: 768px) 100vw, 50vw"
-                        className="object-cover" 
+                        className="w-full h-full object-cover" 
                     />
                     <div className="absolute inset-0 bg-gradient-to-t from-[#0B0D17] to-transparent opacity-60"></div>
                 </div>
