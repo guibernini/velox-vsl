@@ -40,9 +40,10 @@ export default function LandingPage() {
   const whatsappBase = `https://wa.me/${whatsappNumber}`;
   const instagramLink = "https://www.instagram.com/veloxsolar.pompeiahome/";
   const emailLink = "mailto:saopaulo.pompeia@veloxsolarenergia.com.br";
-  
+   
   // WEBHOOK & TAGS
-  const webhookUrl = "https://hook.us2.make.com/6xwyjwejrjvweam1akefa9u35sv72j5g";
+  // *** Webhook atualizado abaixo ***
+  const webhookUrl = "https://hook.us2.make.com/hcstumoeycg1xhdy9q4uk4r07kpzytij";
   const googleAdsId = "AW-17791443438"; 
   const conversionLabel = "AW-17791443438/q-NqCPPHz9UbEO7Dz6NC";
 
@@ -74,7 +75,7 @@ export default function LandingPage() {
   const [sendingLead, setSendingLead] = useState(false);
   const [openIndex, setOpenIndex] = useState(null);
   const toggleIndex = (index) => setOpenIndex(openIndex === index ? null : index);
-  
+   
   const [formData, setFormData] = useState({ valorConta: "", tipoImovel: "residencial", nome: "", email: "", telefone: "", cidade: "", estado: "" });
   const [simulation, setSimulation] = useState({ economiaAnual: 0, qtdPlacas: 0, producaoMensal: 0, areaNecessaria: 0, valorMensal: 0, novaContaMensal: 0 });
 
