@@ -112,7 +112,7 @@ export default function LandingPage() {
     setSendingLead(true);
     const leadData = { ...formData, ...simulation, data_criacao: new Date().toLocaleString() };
     try { await fetch(webhookUrl, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(leadData) }); } catch (e) { console.error("Erro Webhook:", e); }
-    trackConversion('AddPaymentInfo'); 
+    trackConversion('Lead'); 
     setStep(3);
     setSendingLead(false);
   };
@@ -180,7 +180,7 @@ export default function LandingPage() {
     { question: "E se não tiver sol ou chover?", answer: "O sistema funciona com a radiação, não apenas com sol direto. Em dias nublados, ele continua gerando, porém em menor intensidade." },
     { question: "Quanto tempo duram as placas?", answer: "Os painéis solares são projetados para durar mais de 25 anos com eficiência acima de 80%, exigindo pouquíssima manutenção." },
     { question: "Como funciona o financiamento?", answer: "Trabalhamos com linhas de crédito solar onde a própria economia na conta de luz paga a parcela do financiamento. É a famosa 'troca de conta'." },
-    { question: "O sistema valoriza o imóvel?", answer: "Sim! Estudos do mercado imobiliário mostram que casas com energia solar própria valorizam entre 4% a 6% na venda." },
+    { question: "O sistema valoriza o imóvel?", answer: "Sim! Estudos do mercado imobiliário mostram que casas com energia solar própria valorizam entre 4% a 6%." },
   ];
 
   return (
@@ -208,7 +208,7 @@ export default function LandingPage() {
             <motion.div initial={{ opacity: 0, x: -50 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.8 }}>
                 
                 <div className="inline-block px-6 py-2 rounded-full border border-[#00FF88] bg-[#00FF88]/20 text-[#00FF88] text-lg font-bold mb-6 backdrop-blur-md shadow-[0_0_15px_rgba(0,255,136,0.2)]">
-                   🇧🇷 Atendimento em todo o Brasil
+                    🇧🇷 Atendimento em todo o Brasil
                 </div>
 
                 <h1 className="text-4xl md:text-6xl font-bold mb-6 leading-tight">Reduza em até 95% sua conta de luz com a <span className="text-[#00FF88]">Velox Solar</span></h1>
