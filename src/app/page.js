@@ -42,23 +42,30 @@ export default function LandingPage() {
   const emailLink = "mailto:saopaulo.pompeia@veloxsolarenergia.com.br";
    
   // WEBHOOK & TAGS
-  // *** Webhook atualizado abaixo ***
   const webhookUrl = "https://hook.us2.make.com/hcstumoeycg1xhdy9q4uk4r07kpzytij";
   const googleAdsId = "AW-17791443438"; 
   const conversionLabel = "AW-17791443438/q-NqCPPHz9UbEO7Dz6NC";
 
+  // 🔥 CORREÇÃO: Função de rastreamento ajustada
   const trackConversion = (eventName, params = {}) => {
     if (typeof window !== "undefined") {
       if (window.fbq) { window.fbq('track', eventName, params); }
       if (window.gtag) {
-        const sendTo = (['Contact', 'Lead', 'InitiateCheckout'].includes(eventName)) ? conversionLabel : googleAdsId;
-        window.gtag('event', 'conversion', { 'send_to': sendTo });
+        // Apenas 'Contact' e 'Lead' vão para a meta de conversão paga
+        const sendTo = (['Contact', 'Lead'].includes(eventName)) ? conversionLabel : googleAdsId;
+        
+        const googleEventName = eventName === 'InitiateCheckout' ? 'begin_checkout' : 'conversion';
+        
+        window.gtag('event', googleEventName, { 'send_to': sendTo });
       }
     }
   };
 
-  const redirectToThankYou = (finalUrl, originName) => {
-    trackConversion('Contact', { content_name: originName });
+  // 🔥 CORREÇÃO: skipTracking para evitar dupla cobrança
+  const redirectToThankYou = (finalUrl, originName, skipTracking = false) => {
+    if (!skipTracking) {
+      trackConversion('Contact', { content_name: originName });
+    }
     localStorage.setItem("velox_redirect", finalUrl);
     router.push("/obrigado");
   };
@@ -112,6 +119,7 @@ export default function LandingPage() {
     setSendingLead(true);
     const leadData = { ...formData, ...simulation, data_criacao: new Date().toLocaleString() };
     try { await fetch(webhookUrl, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(leadData) }); } catch (e) { console.error("Erro Webhook:", e); }
+    
     trackConversion('Lead'); 
     setStep(3);
     setSendingLead(false);
@@ -120,7 +128,9 @@ export default function LandingPage() {
   const handleFinalWhatsApp = () => {
     const fMoney = (val) => val.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
     const text = `*Simulação Velox:* ☀️\n👤 *Cliente:* ${formData.nome}\n📍 *Local:* ${formData.cidade}/${formData.estado}\n💲 *Conta:* ${formData.valorConta}\n📉 *Economia:* ${fMoney(simulation.economiaAnual)}\n🔆 *Placas:* ${simulation.qtdPlacas}`;
-    redirectToThankYou(`${whatsappBase}?text=${encodeURIComponent(text)}`, 'Calculadora Final');
+    
+    // 🔥 CORREÇÃO: Passando 'true' para não disparar 'Contact' e cobrar duas vezes
+    redirectToThankYou(`${whatsappBase}?text=${encodeURIComponent(text)}`, 'Calculadora Final', true);
   };
 
   const handleCurrencyInput = (e) => {
@@ -150,7 +160,7 @@ export default function LandingPage() {
   ];
 
   const carouselRef = useRef(null);
-  const [selectedSolution, setSelectedSolution] = useState(null); // Estado para o Modal
+  const [selectedSolution, setSelectedSolution] = useState(null); 
 
   const scrollLeft = () => {
     if (carouselRef.current) carouselRef.current.scrollBy({ left: -320, behavior: 'smooth' });
@@ -161,7 +171,7 @@ export default function LandingPage() {
   };
 
   const handleSolutionClick = (item) => {
-    setSelectedSolution(item); // Abre o modal com o item clicado
+    setSelectedSolution(item); 
   };
 
   const handleModalClose = () => {
@@ -401,7 +411,7 @@ export default function LandingPage() {
                     animate={{ scale: 1, y: 0 }}
                     exit={{ scale: 0.9, y: 20 }}
                     className="bg-[#0B0D17] border border-[#00FF88]/30 p-8 md:p-12 rounded-3xl max-w-lg w-full relative shadow-[0_0_50px_rgba(0,255,136,0.15)]"
-                    onClick={(e) => e.stopPropagation()} // Impede fechar ao clicar dentro
+                    onClick={(e) => e.stopPropagation()} 
                 >
                     <button 
                         onClick={handleModalClose}
@@ -429,11 +439,10 @@ export default function LandingPage() {
         )}
       </AnimatePresence>
 
-      {/* ================= FAQ & FOOTER (CORRIGIDO AQUI) ================= */}
+      {/* ================= FAQ & FOOTER ================= */}
       <section className="py-24 px-6 relative z-10 bg-black/20">
         <div className="container mx-auto max-w-6xl flex flex-col lg:flex-row gap-16 items-start">
              <div className="lg:w-1/2 sticky top-24">
-                {/* 🛑 ALTERAÇÃO: Usando tag <img> padrão do HTML */}
                 <div className="relative h-[300px] lg:h-[500px] w-full rounded-2xl overflow-hidden border border-white/10 shadow-2xl">
                     <img 
                         src="/solar-texto.jpeg" 
